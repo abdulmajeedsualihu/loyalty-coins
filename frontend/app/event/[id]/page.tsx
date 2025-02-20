@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Calendar, Clock, MapPin, QrCode, Trophy, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
@@ -42,7 +48,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
           checkedInCount,
           organizer,
           rewardAmount,
-          isActive
+          isActive,
         ] = await contract.getEventDetails(params.id);
 
         if (!isActive) {
@@ -66,7 +72,10 @@ export default function EventPage({ params }: { params: { id: string } }) {
         });
 
         if (address) {
-          const isRegistered = await contract.isParticipantRegistered(params.id, address);
+          const isRegistered = await contract.isParticipantRegistered(
+            params.id,
+            address
+          );
           setRegistered(isRegistered);
         }
       } catch (error) {
@@ -98,7 +107,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
     try {
       const tx = await contract!.registerForEvent(params.id);
       await tx.wait();
-      
+
       setRegistered(true);
       toast({
         title: "Registration Successful",
@@ -107,7 +116,9 @@ export default function EventPage({ params }: { params: { id: string } }) {
     } catch (error: any) {
       toast({
         title: "Registration Failed",
-        description: error.message || "Failed to register for the event. Please try again.",
+        description:
+          error.message ||
+          "Failed to register for the event. Please try again.",
         variant: "destructive",
       });
     }
@@ -167,16 +178,36 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     <div className="flex items-start space-x-4">
                       <Trophy className="h-5 w-5 text-primary mt-1" />
                       <div>
-                        <p>First Check-in: {ethers.formatEther(event.rewardAmount * 50n / 100n)} ETH</p>
-                        <p>Second Check-in: {ethers.formatEther(event.rewardAmount * 30n / 100n)} ETH</p>
-                        <p>Third Check-in: {ethers.formatEther(event.rewardAmount * 20n / 100n)} ETH</p>
+                        <p>
+                          First Check-in:{" "}
+                          {ethers.formatEther(
+                            (event.rewardAmount * 50n) / 100n
+                          )}{" "}
+                          ETH
+                        </p>
+                        <p>
+                          Second Check-in:{" "}
+                          {ethers.formatEther(
+                            (event.rewardAmount * 30n) / 100n
+                          )}{" "}
+                          ETH
+                        </p>
+                        <p>
+                          Third Check-in:{" "}
+                          {ethers.formatEther(
+                            (event.rewardAmount * 20n) / 100n
+                          )}{" "}
+                          ETH
+                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div>
                     <h3 className="font-semibold mb-2">Organizer</h3>
-                    <p className="text-muted-foreground font-mono">{event.organizer}</p>
+                    <p className="text-muted-foreground font-mono">
+                      {event.organizer}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -190,7 +221,10 @@ export default function EventPage({ params }: { params: { id: string } }) {
                 <CardDescription>
                   <div className="flex items-center mt-2">
                     <Users className="h-4 w-4 mr-2" />
-                    <span>{event.registeredCount} / {event.maxParticipants} registered</span>
+                    <span>
+                      {event.registeredCount} / {event.maxParticipants}{" "}
+                      registered
+                    </span>
                   </div>
                 </CardDescription>
               </CardHeader>
@@ -212,11 +246,13 @@ export default function EventPage({ params }: { params: { id: string } }) {
                       className="w-full"
                       variant="outline"
                       onClick={() => {
-                        const link = document.createElement('a');
+                        const link = document.createElement("a");
                         link.download = `event-${event.id}-qr.png`;
-                        link.href = document.querySelector('svg')?.outerHTML
-                          ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(document.querySelector('svg')!.outerHTML)}`
-                          : '';
+                        link.href = document.querySelector("svg")?.outerHTML
+                          ? `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+                              document.querySelector("svg")!.outerHTML
+                            )}`
+                          : "";
                         link.click();
                       }}
                     >
