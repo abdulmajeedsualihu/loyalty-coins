@@ -104,8 +104,9 @@ export default function Home() {
               <span className="font-semibold">EventChain</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2024 EventChain. All rights reserved.
+              © 2025 EventChain. All rights reserved.
             </p>
+            <p>Designed by QlickByte</p>
           </div>
         </div>
       </footer>

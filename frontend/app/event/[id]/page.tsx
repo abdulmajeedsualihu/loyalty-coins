@@ -14,7 +14,7 @@ import { ethers } from "ethers";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useWeb3 } from "@/hooks/use-web3";
-import { QRCodeSVG } from "qrcode.react";
+import QRCode from "react-qr-code";
 import Link from "next/link";
 
 interface Event {
@@ -259,7 +259,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                 {registered ? (
                   <div className="space-y-4">
                     <div className="text-center p-4">
-                      <QRCodeSVG
+                      <QRCode
                         value={qrValue}
                         size={256}
                         className="mx-auto mb-4"
