@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useWeb3 } from "@/hooks/use-web3";
 import QrReader from "react-qr-scanner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { QrCode } from "lucide-react";
 
 export default function CheckInPage({ params }: { params: { id: string } }) {
   const [scanning, setScanning] = useState(false);
@@ -61,6 +63,23 @@ export default function CheckInPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Link href="/">
+            <div className="flex items-center space-x-2">
+            <QrCode className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold">EventChain</span>
+            </div>
+            </Link>
+          </div>
+          <nav className="space-x-4">
+            <Button variant="ghost" asChild>
+              <Link href="/create">Create Event</Link>
+            </Button>
+          </nav>
+        </div>
+      </header>
       <div className="container mx-auto px-4 py-8">
         <Card className="max-w-md mx-auto">
           <CardHeader>

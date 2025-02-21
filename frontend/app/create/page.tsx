@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, QrCode } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
@@ -17,6 +17,7 @@ import { ethers } from "ethers";
 import { useToast } from "@/hooks/use-toast";
 import { useWeb3 } from "@/hooks/use-web3";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const formSchema = z.object({
   name: z.string().min(3, "Event name must be at least 3 characters"),
@@ -88,6 +89,26 @@ export default function CreateEventPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Link href="/">
+            <div className="flex items-center space-x-2">
+            <QrCode className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold">EventChain</span>
+            </div>
+            </Link>
+          </div>
+          <nav className="space-x-4">
+            <Button variant="ghost" asChild>
+              <Link href="/events">Browse Events</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/create">Create Event</Link>
+            </Button>
+          </nav>
+        </div>
+      </header>
       <div className="container mx-auto px-4 py-8">
         <Card className="max-w-2xl mx-auto">
           <CardHeader>

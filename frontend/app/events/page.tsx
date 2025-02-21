@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { format } from "date-fns";
 import { useWeb3 } from "@/hooks/use-web3";
+import { QrCode } from "lucide-react";
 
 interface Event {
   id: number;
@@ -83,6 +84,26 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Link href="/">
+            <div className="flex items-center space-x-2">
+            <QrCode className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold">EventChain</span>
+            </div>
+            </Link>
+          </div>
+          <nav className="space-x-4 flex items-center">
+            <Button variant="ghost" asChild>
+              <Link href="/events">Browse Events</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/create">Create Event</Link>
+            </Button>
+          </nav>
+        </div>
+      </header>
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Upcoming Events</h1>

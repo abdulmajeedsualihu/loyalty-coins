@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useWeb3 } from "@/hooks/use-web3";
 import { QRCodeSVG } from "qrcode.react";
+import Link from "next/link";
 
 interface Event {
   id: number;
@@ -144,6 +145,29 @@ export default function EventPage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-background">
+      <header className="border-b">
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <Link href="/">
+            <div className="flex items-center space-x-2">
+            <QrCode className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold">EventChain</span>
+            </div>
+            </Link>
+          </div>
+          <nav className="space-x-4">
+            <Button variant="ghost" asChild>
+                <Link href={`/check-in/${params.id}`}>Check in</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/events">Browse Events</Link>
+            </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/create">Create Event</Link>
+            </Button>
+          </nav>
+        </div>
+      </header>
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
@@ -208,6 +232,9 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     <p className="text-muted-foreground font-mono">
                       {event.organizer}
                     </p>
+                  <Button size="lg" variant="outline" className="bg-white text-black" asChild>
+                    <Link href={`/check-in/${params.id}`}>Check in</Link>
+                  </Button>
                   </div>
                 </div>
               </CardContent>
