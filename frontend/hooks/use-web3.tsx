@@ -5,6 +5,13 @@ import { ethers } from "ethers";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/web3/config";
 import { useToast } from "./use-toast";
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
+
 interface Web3ContextType {
   address: string | null;
   isConnected: boolean;
@@ -33,7 +40,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   const connect = async () => {
-    if (typeof window.ethereum === "undefined") {
+    if (!window?.ethereum) {
       toast({
         title: "MetaMask Required",
         description: "Please install MetaMask to use this application.",
