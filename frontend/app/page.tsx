@@ -13,7 +13,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <QrCode className="h-8 w-8 text-primary" />
-            <span className="text-2xl font-bold">EventChain</span>
+            <span className="text-2xl font-bold">Kawoho</span>
           </div>
           <nav className="space-x-4">
             <Button variant="ghost" asChild>
@@ -101,10 +101,10 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
               <QrCode className="h-6 w-6 text-primary" />
-              <span className="font-semibold">EventChain</span>
+              <span className="font-semibold">Kawoho</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © 2025 EventChain. All rights reserved.
+              © 2025 Kawoho. All rights reserved.
             </p>
             <p>Designed by QlickByte</p>
           </div>
