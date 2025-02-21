@@ -11,13 +11,12 @@ declare global {
   }
 }
 
-
 interface Web3ContextType {
   address: string | null;
   isConnected: boolean;
   contract: ethers.Contract | null;
-  provider: ethers.Provider | null;
-  signer: ethers.Signer | null;
+  provider: ethers.BrowserProvider | null;
+  signer: ethers.JsonRpcSigner | null;
   connect: () => Promise<void>;
   disconnect: () => void;
 }
@@ -35,10 +34,11 @@ const Web3Context = createContext<Web3ContextType>({
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null);
   const [contract, setContract] = useState<ethers.Contract | null>(null);
-  const [provider, setProvider] = useState<ethers.Provider | null>(null);
-  const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+  const [signer, setSigner] = useState<ethers.JsonRpcSigner | null>(null);
   const { toast } = useToast();
 
+  // Function to connect wallet
   const connect = async () => {
     if (!window?.ethereum) {
       toast({
@@ -50,21 +50,26 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+      const providerInstance = new ethers.BrowserProvider(window.ethereum);
+      await providerInstance.send("eth_requestAccounts", []);
+      const signerInstance = await providerInstance.getSigner();
+      const userAddress = await signerInstance.getAddress();
+      const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signerInstance);
 
-      setProvider(provider);
-      setSigner(signer);
-      setAddress(address);
-      setContract(contract);
+      setProvider(providerInstance);
+      setSigner(signerInstance);
+      setAddress(userAddress);
+      setContract(contractInstance);
+
+      // Store wallet connection in localStorage
+      localStorage.setItem("connectedWallet", userAddress);
 
       toast({
         title: "Connected",
-        description: "Wallet connected successfully!",
+        description: `Wallet connected: ${userAddress}`,
       });
     } catch (error) {
+      console.error("Wallet connection failed:", error);
       toast({
         title: "Connection Failed",
         description: "Failed to connect wallet. Please try again.",
@@ -73,25 +78,69 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Function to disconnect wallet
   const disconnect = () => {
     setProvider(null);
     setSigner(null);
     setAddress(null);
     setContract(null);
+    localStorage.removeItem("connectedWallet");
+
+    toast({
+      title: "Disconnected",
+      description: "Wallet disconnected successfully.",
+    });
   };
 
+  // Auto-reconnect if wallet was connected before
   useEffect(() => {
-    if (typeof window.ethereum !== "undefined") {
-      window.ethereum.on("accountsChanged", () => {
-        disconnect();
+    const autoConnect = async () => {
+      const savedAddress = localStorage.getItem("connectedWallet");
+      if (savedAddress && window.ethereum) {
+        try {
+          const providerInstance = new ethers.BrowserProvider(window.ethereum);
+          const signerInstance = await providerInstance.getSigner();
+          const userAddress = await signerInstance.getAddress();
+          const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signerInstance);
+
+          setProvider(providerInstance);
+          setSigner(signerInstance);
+          setAddress(userAddress);
+          setContract(contractInstance);
+
+          toast({
+            title: "Reconnected",
+            description: `Wallet reconnected: ${userAddress}`,
+          });
+        } catch (error) {
+          console.error("Auto-reconnect failed:", error);
+          localStorage.removeItem("connectedWallet");
+        }
+      }
+    };
+
+    autoConnect();
+  }, []);
+
+  // Handle account and network changes
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts: string[]) => {
+        if (accounts.length === 0) {
+          disconnect();
+        } else {
+          setAddress(accounts[0]);
+          localStorage.setItem("connectedWallet", accounts[0]);
+        }
       });
+
       window.ethereum.on("chainChanged", () => {
         window.location.reload();
       });
     }
 
     return () => {
-      if (typeof window.ethereum !== "undefined") {
+      if (window.ethereum) {
         window.ethereum.removeAllListeners();
       }
     };
